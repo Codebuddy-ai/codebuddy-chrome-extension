@@ -40,7 +40,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 			
 			const combined = results.map((result) => result.result).join("\\n")
 			console.log("Extracted data");
-			const id = Math.random().toFixed(0)
+			const id = (Math.random()*1000000000).toFixed(0)
             const value = JSON.stringify(["codebuddyPageData", id, formatVersion, tab.url, combined]);
 
             addToClipboard(value);
