@@ -15,9 +15,9 @@ chrome.runtime.onInstalled.addListener(async () => {
 		 }, (results) => {
 			
 			const combined = results.map((result) => result.result).join("\\n")
-			console.log(combined);
+			console.log("Extracted data");
 			const id = Math.random().toFixed(0)
-			const value = JSON.stringify(["codebuddyPageData", tab.url, combined]);
+			const value = JSON.stringify(["codebuddyPageData", id, tab.url, combined]);
 			
 			chrome.scripting.executeScript({
 				target: { tabId: tab.id },
