@@ -21,6 +21,16 @@ chrome.runtime.onInstalled.addListener(async () => {
             data: value
         });
     }
+
+    const showNotification = () => {
+        chrome.notifications.create('codebuddy', {
+            type: 'basic',
+            silent: true,
+            iconUrl: 'icon-48.png',
+            title: 'Data extracted',
+            message: 'Open your IDE to receive the data.'
+        });
+    }
     
     const extractDataAndCopy = (tab) => {
 		chrome.scripting.executeScript({
@@ -40,6 +50,7 @@ chrome.runtime.onInstalled.addListener(async () => {
     const genericOnClick = (info, tab) => {
         if(info.menuItemId === "sendToCodebuddy") {
             extractDataAndCopy(tab);
+            showNotification()
         }
     };
     
