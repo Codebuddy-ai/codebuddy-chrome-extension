@@ -4,7 +4,7 @@
   "description": "Extension that extracts page data for use by the Codebuddy AI",
   "version": "1.0",
   "action": {
-    "default_popup": "popup.html",
+    
     "default_icon": "codebuddy.png"
   },
    "permissions": [
