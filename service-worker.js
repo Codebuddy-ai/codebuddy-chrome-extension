@@ -4,6 +4,8 @@ chrome.runtime.onInstalled.addListener(async () => {
         return document.body.innerText;
     }
 
+    const formatVersion = 1;
+
     async function addToClipboard(value) {
         await chrome.offscreen.createDocument({
             url: 'offscreen.html',
@@ -29,7 +31,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 			const combined = results.map((result) => result.result).join("\\n")
 			console.log("Extracted data");
 			const id = Math.random().toFixed(0)
-			const value = JSON.stringify(["codebuddyPageData", id, tab.url, combined]);
+            const value = JSON.stringify(["codebuddyPageData", id, formatVersion, tab.url, combined]);
 
             addToClipboard(value);
 		 });
