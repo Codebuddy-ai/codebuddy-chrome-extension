@@ -3,10 +3,22 @@ chrome.runtime.onInstalled.addListener(async () => {
     const getContents = () => {
         return document.body.innerText;
     }
-	
-	const writeToClipboard = (value) => {
-		navigator.clipboard.writeText(value)
-	}
+
+    async function addToClipboard(value) {
+        await chrome.offscreen.createDocument({
+            url: 'offscreen.html',
+            reasons: [chrome.offscreen.Reason.CLIPBOARD],
+            justification: 'Write text to the clipboard.'
+        });
+
+        // Now that we have an offscreen document, we can dispatch the
+        // message.
+        chrome.runtime.sendMessage({
+            type: 'copy-data-to-clipboard',
+            target: 'offscreen-doc',
+            data: value
+        });
+    }
     
     const extractDataAndCopy = (tab) => {
 		chrome.scripting.executeScript({
@@ -18,13 +30,8 @@ chrome.runtime.onInstalled.addListener(async () => {
 			console.log("Extracted data");
 			const id = Math.random().toFixed(0)
 			const value = JSON.stringify(["codebuddyPageData", id, tab.url, combined]);
-			
-			chrome.scripting.executeScript({
-				target: { tabId: tab.id },
-				func: writeToClipboard,
-				args: [value]
-			}, (results) => {});
-			
+
+            addToClipboard(value);
 		 });
     }
     

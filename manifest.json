@@ -8,9 +8,10 @@
     "default_icon": "codebuddy.png"
   },
    "permissions": [
-    "contextMenus",
-	"scripting",
-	"clipboardWrite"
+     "contextMenus",
+	 "scripting",
+     "offscreen",
+     "clipboardWrite"
   ],
   "host_permissions": [
     "<all_urls>"
