@@ -4,6 +4,10 @@ chrome.runtime.onInstalled.addListener(async () => {
         return document.body.innerText;
     }
 
+    const getTitle = () => {
+        return document.title;
+    }
+
     const formatVersion = 1;
 
     async function addToClipboard(value) {
@@ -15,7 +19,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 
         // Now that we have an offscreen document, we can dispatch the
         // message.
-        chrome.runtime.sendMessage({
+        await chrome.runtime.sendMessage({
             type: 'copy-data-to-clipboard',
             target: 'offscreen-doc',
             data: value
@@ -31,26 +35,43 @@ chrome.runtime.onInstalled.addListener(async () => {
             message: 'Open your IDE to receive the data.'
         });
     }
-    
-    const extractDataAndCopy = (tab) => {
-		chrome.scripting.executeScript({
-			target: { tabId: tab.id, allFrames: true },
-			func: getContents
-		 }, (results) => {
-			
-			const combined = results.map((result) => result.result).join("\\n")
-			console.log("Extracted data");
-			const id = (Math.random()*1000000000).toFixed(0)
-            const value = JSON.stringify(["codebuddyPageData", id, formatVersion, tab.url, combined]);
 
-            addToClipboard(value);
-		 });
+    const extractTitle = (tab, handler) => {
+        chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            func: getTitle
+        }, (results) => {
+            let result = results[0].result;
+            handler(result);
+        })
+
+    }
+
+    const extractText = (tab, handler) => {
+        chrome.scripting.executeScript({
+            target: { tabId: tab.id, allFrames: true },
+            func: getContents
+        }, (results) => {
+            const result = results.map((result) => result.result).join("\\n")
+            handler(result);
+        });
     }
     
-    const genericOnClick = (info, tab) => {
+    const extractDataAndCopy = (tab, handler) => {
+        extractTitle(tab, (title) => {
+            extractText(tab, (text) => {
+                const id = (Math.random()*1000000000).toFixed(0)
+                const value = JSON.stringify(["codebuddyPageData", id, formatVersion, tab.url, title, text]);
+                addToClipboard(value).then(handler);
+            })
+        })
+    }
+    
+    const genericOnClick = async (info, tab) => {
         if(info.menuItemId === "sendToCodebuddy") {
-            extractDataAndCopy(tab);
-            showNotification()
+            extractDataAndCopy(tab, () => {
+                showNotification()
+            });
         }
     };
     
