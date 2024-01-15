@@ -41,8 +41,12 @@ chrome.runtime.onInstalled.addListener(async () => {
             target: { tabId: tab.id },
             func: getTitle
         }, (results) => {
-            let result = results[0].result;
-            handler(result);
+            if(results) {
+                let result = results[0].result;
+                handler(result);
+            } else {
+                handler("");
+            }
         })
 
     }
@@ -52,6 +56,9 @@ chrome.runtime.onInstalled.addListener(async () => {
             target: { tabId: tab.id, allFrames: true },
             func: getContents
         }, (results) => {
+            if(!results) {
+                return;
+            }
             const result = results.map((result) => result.result).join("\\n")
             handler(result);
         });
