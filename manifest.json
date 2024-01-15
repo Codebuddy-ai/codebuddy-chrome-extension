@@ -12,10 +12,8 @@
 	 "scripting",
      "offscreen",
      "clipboardWrite",
-     "notifications"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+     "notifications",
+	 "activeTab"
   ],
   "background": {
     "service_worker": "service-worker.js"
