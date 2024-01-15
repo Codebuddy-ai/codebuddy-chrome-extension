@@ -16,6 +16,7 @@ chrome.runtime.onInstalled.addListener(async () => {
             reasons: [chrome.offscreen.Reason.CLIPBOARD],
             justification: 'Write text to the clipboard.'
         });
+        console.log("Created offscreen document");
 
         // Now that we have an offscreen document, we can dispatch the
         // message.
@@ -24,6 +25,7 @@ chrome.runtime.onInstalled.addListener(async () => {
             target: 'offscreen-doc',
             data: value
         });
+        console.log("Dispatched copy-message to offscreen document");
     }
 
     const showNotification = () => {
@@ -45,6 +47,7 @@ chrome.runtime.onInstalled.addListener(async () => {
                 let result = results[0].result;
                 handler(result);
             } else {
+                console.log("Unable to extract title")
                 handler("");
             }
         })
@@ -57,6 +60,7 @@ chrome.runtime.onInstalled.addListener(async () => {
             func: getContents
         }, (results) => {
             if(!results) {
+                console.log("Unable to extract text");
                 return;
             }
             const result = results.map((result) => result.result).join("\\n")
@@ -69,6 +73,7 @@ chrome.runtime.onInstalled.addListener(async () => {
             extractText(tab, (text) => {
                 const id = (Math.random()*1000000000).toFixed(0)
                 const value = JSON.stringify(["codebuddyPageData", id, formatVersion, tab.url, title, text]);
+                console.log("Extracted data for id : " + id);
                 addToClipboard(value).then(handler);
             })
         })
@@ -77,6 +82,7 @@ chrome.runtime.onInstalled.addListener(async () => {
     const genericOnClick = async (info, tab) => {
         if(info.menuItemId === "sendToCodebuddy") {
             extractDataAndCopy(tab, () => {
+                console.log("Sending notification")
                 showNotification()
             });
         }
