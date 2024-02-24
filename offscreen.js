@@ -26,6 +26,7 @@ chrome.runtime.onMessage.addListener(handleMessages);
 // dispatching the
 // message to a more specific message handler.
 async function handleMessages(message) {
+    console.log(`Received message for offscreen-doc: ${message.type}`);
     // Return early if this message isn't meant for the offscreen document.
     if (message.target !== 'offscreen-doc') {
         return;
@@ -39,6 +40,7 @@ async function handleMessages(message) {
         default:
             console.warn(`Unexpected message type received: '${message.type}'.`);
     }
+    console.log(`Finished processing message for offscreen-doc: ${message.type}`);
 }
 
 // We use a <textarea> element for two main reasons:
@@ -53,6 +55,7 @@ const textEl = document.querySelector('#text');
 // requires that the window is focused, but offscreen documents cannot be
 // focused. As such, we have to fall back to `document.execCommand()`.
 async function handleClipboardWrite(data) {
+    console.log(`Writing data to clipboard: ${data}`);
     try {
         // Error if we received the wrong kind of data.
         if (typeof data !== 'string') {
@@ -72,3 +75,6 @@ async function handleClipboardWrite(data) {
         window.close();
     }
 }
+
+// Signal readiness to the service worker
+chrome.runtime.sendMessage('offscreen-doc-ready');
