@@ -111,18 +111,25 @@ const genericOnClick = async (info, tab) => {
     }
 };
 
-const registerClickListener = () => chrome.contextMenus.onClicked.addListener(genericOnClick);
+const registerClickListener = () => {
+    console.log("Registering click listener")
+    chrome.contextMenus.onClicked.addListener(genericOnClick);
+}
+
+console.log("Running service-worker.js")
+
+registerClickListener()
 
 chrome.runtime.onInstalled.addListener(async () => {
-
+    console.log("Adding context menu entry")
     await chrome.contextMenus.create({
         id: "sendToCodebuddy",
         title: "Send to Codebuddy",
         type: 'normal',
         contexts: ['page']
     });
-
-    registerClickListener()
+    //
+    // registerClickListener()
 });
 
-chrome.runtime.onStartup.addListener(() => registerClickListener())
+// chrome.runtime.onStartup.addListener(() => registerClickListener())
