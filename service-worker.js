@@ -50,7 +50,7 @@ async function addToClipboard(value) {
 }
 
 const showNotification = () => {
-    chrome.notifications.create('codebuddy', {
+    chrome.notifications.create('codebuddy_'+Date.now(), {
         type: 'basic',
         silent: true,
         iconUrl: 'icon-48.png',
